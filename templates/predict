@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthAI - Predict Risk</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>🏥 HealthAI</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/predict">Predict Risk</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="prediction-section">
+            <h2>Patient Risk Assessment</h2>
+            <p>Enter patient health data for instant disease risk prediction</p>
+
+            <div class="form-container">
+                <form id="predictionForm">
+                    <div class="form-grid">
+                        <!-- Personal Information -->
+                        <div class="form-group">
+                            <label for="age">Age (years)</label>
+                            <input type="number" id="age" name="age" min="18" max="100" value="45" required>
+                            <small>18-100 years</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bmi">BMI (Body Mass Index)</label>
+                            <input type="number" id="bmi" name="bmi" min="15" max="50" step="0.1" value="26" required>
+                            <small>15-50 kg/m²</small>
+                        </div>
+
+                        <!-- Blood Pressure -->
+                        <div class="form-group">
+                            <label for="bp_systolic">Blood Pressure - Systolic</label>
+                            <input type="number" id="bp_systolic" name="bp_systolic" min="80" max="200" value="130" required>
+                            <small>80-200 mmHg</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bp_diastolic">Blood Pressure - Diastolic</label>
+                            <input type="number" id="bp_diastolic" name="bp_diastolic" min="40" max="120" value="85" required>
+                            <small>40-120 mmHg</small>
+                        </div>
+
+                        <!-- Blood Tests -->
+                        <div class="form-group">
+                            <label for="glucose">Glucose Level (mg/dL)</label>
+                            <input type="number" id="glucose" name="glucose" min="70" max="400" value="110" required>
+                            <small>70-400 mg/dL</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cholesterol">Cholesterol (mg/dL)</label>
+                            <input type="number" id="cholesterol" name="cholesterol" min="100" max="400" value="200" required>
+                            <small>100-400 mg/dL</small>
+                        </div>
+
+                        <!-- Heart & Activity -->
+                        <div class="form-group">
+                            <label for="heart_rate">Heart Rate (bpm)</label>
+                            <input type="number" id="heart_rate" name="heart_rate" min="40" max="150" value="72" required>
+                            <small>40-150 bpm</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="activity_hours">Physical Activity (hours/week)</label>
+                            <input type="number" id="activity_hours" name="activity_hours" min="0" max="24" step="0.5" value="5" required>
+                            <small>0-24 hours</small>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Get Risk Assessment</button>
+                        <button type="reset" class="btn btn-secondary">Clear Form</button>
+                    </div>
+                </form>
+
+                <!-- Sample Data -->
+                <div class="sample-section">
+                    <h4>Quick Test with Sample Data</h4>
+                    <div class="sample-buttons">
+                        <button class="btn btn-small" onclick="loadSample(0)">Low Risk</button>
+                        <button class="btn btn-small" onclick="loadSample(1)">Medium Risk</button>
+                        <button class="btn btn-small" onclick="loadSample(2)">High Risk</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="results-container" style="display: none;">
+                <h3>Risk Assessment Results</h3>
+
+                <div class="result-grid">
+                    <!-- Diabetes Result -->
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h4>Diabetes Risk</h4>
+                            <span id="diabetesRiskLevel" class="risk-badge"></span>
+                        </div>
+                        <div class="risk-meter">
+                            <div id="diabetesRiskBar" class="risk-bar"></div>
+                        </div>
+                        <p class="risk-score">Risk Score: <strong id="diabetesScore">0</strong>%</p>
+                        <p class="recommendation" id="diabetesRec"></p>
+                    </div>
+
+                    <!-- Heart Disease Result -->
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h4>Heart Disease Risk</h4>
+                            <span id="heartRiskLevel" class="risk-badge"></span>
+                        </div>
+                        <div class="risk-meter">
+                            <div id="heartRiskBar" class="risk-bar"></div>
+                        </div>
+                        <p class="risk-score">Risk Score: <strong id="heartScore">0</strong>%</p>
+                        <p class="recommendation" id="heartRec"></p>
+                    </div>
+                </div>
+
+                <!-- Overall Summary -->
+                <div class="summary-box">
+                    <h4>Overall Assessment</h4>
+                    <p id="overallSummary"></p>
+                </div>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Analyzing patient data...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="error" class="error-message" style="display: none;"></div>
+        </section>
+    </div>
+
+    <footer>
+        <p>HealthAI v1.0 | Veritas AI International High School Hackathon</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultsDiv = document.getElementById('results');
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+
+        // Load sample data
+        async function loadSample(index) {
+            try {
+                const response = await fetch('/api/sample-patients');
+                const samples = await response.json();
+                const sample = samples[index];
+
+                document.getElementById('age').value = sample.age;
+                document.getElementById('bmi').value = sample.bmi;
+                document.getElementById('bp_systolic').value = sample.bp_systolic;
+                document.getElementById('bp_diastolic').value = sample.bp_diastolic;
+                document.getElementById('glucose').value = sample.glucose;
+                document.getElementById('cholesterol').value = sample.cholesterol;
+                document.getElementById('heart_rate').value = sample.heart_rate;
+                document.getElementById('activity_hours').value = sample.activity_hours;
+            } catch (error) {
+                console.error('Error loading samples:', error);
+            }
+        }
+
+        // Form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            resultsDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+            loadingDiv.style.display = 'flex';
+
+            try {
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Prediction failed');
+                }
+
+                displayResults(result);
+            } catch (error) {
+                errorDiv.textContent = 'Error: ' + error.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        });
+
+        // Display results
+        function displayResults(result) {
+            const diabetes = result.diabetes;
+            const heart = result.heart_disease;
+            const overall = result.overall_risk;
+
+            // Update diabetes results
+            document.getElementById('diabetesRiskLevel').textContent = diabetes.risk_level;
+            document.getElementById('diabetesRiskLevel').className = `risk-badge ${diabetes.risk_level.toLowerCase()}`;
+            document.getElementById('diabetesScore').textContent = diabetes.risk_score;
+            document.getElementById('diabetesRiskBar').style.width = diabetes.risk_score + '%';
+            document.getElementById('diabetesRiskBar').className = `risk-bar ${diabetes.risk_level.toLowerCase()}`;
+            document.getElementById('diabetesRec').textContent = diabetes.recommendation;
+
+            // Update heart disease results
+            document.getElementById('heartRiskLevel').textContent = heart.risk_level;
+            document.getElementById('heartRiskLevel').className = `risk-badge ${heart.risk_level.toLowerCase()}`;
+            document.getElementById('heartScore').textContent = heart.risk_score;
+            document.getElementById('heartRiskBar').style.width = heart.risk_score + '%';
+            document.getElementById('heartRiskBar').className = `risk-bar ${heart.risk_level.toLowerCase()}`;
+            document.getElementById('heartRec').textContent = heart.recommendation;
+
+            // Update overall summary
+            const overallLevel = overall < 30 ? 'LOW' : overall < 70 ? 'MEDIUM' : 'HIGH';
+            document.getElementById('overallSummary').textContent =
+                `The patient has an overall ${overallLevel} risk score of ${Math.round(overall)}%. ` +
+                (overallLevel === 'HIGH' ? 'Immediate medical consultation is recommended.' :
+                 overallLevel === 'MEDIUM' ? 'Regular monitoring and lifestyle improvements are advised.' :
+                 'Continue healthy lifestyle habits.');
+
+            resultsDiv.style.display = 'block';
+            window.scrollTo({ top: resultsDiv.offsetTop - 100, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
