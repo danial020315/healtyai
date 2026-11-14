@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthAI - Disease Risk Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>🏥 HealthAI</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Dashboard</a></li>
+                <li><a href="/predict">Predict Risk</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section class="hero">
+            <h2>Disease Risk Prediction System</h2>
+            <p>AI-powered health assessment for early disease detection</p>
+        </section>
+
+        <section class="features">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Diabetes Risk</h3>
+                    <p>Predict diabetes risk based on health metrics and lifestyle factors</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">❤️</div>
+                    <h3>Heart Disease Risk</h3>
+                    <p>Assess cardiovascular disease risk with advanced ML algorithms</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-time Analysis</h3>
+                    <p>Instant predictions from patient data in seconds</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Risk Stratification</h3>
+                    <p>Categorize patients as Low, Medium, or High risk</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h3>Get Started</h3>
+            <p>Enter patient data to receive instant health risk assessment</p>
+            <a href="/predict" class="btn btn-primary">Start Prediction</a>
+        </section>
+
+        <section class="stats">
+            <div class="stat-box">
+                <h4>Model Accuracy</h4>
+                <p class="stat-value">~85%</p>
+            </div>
+            <div class="stat-box">
+                <h4>Training Data</h4>
+                <p class="stat-value">5000+</p>
+                <p>patient records</p>
+            </div>
+            <div class="stat-box">
+                <h4>Features Analyzed</h4>
+                <p class="stat-value">8</p>
+                <p>health metrics</p>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h3>About HealthAI</h3>
+            <p>
+                HealthAI is an intelligent health assessment system built for the Veritas AI Hackathon
+                (AI + Health track). It uses machine learning to analyze patient health data and predict
+                the risk of common diseases.
+            </p>
+            <p>
+                <strong>Technology:</strong> Python, scikit-learn, Flask, Random Forest Classifier
+            </p>
+            <p>
+                <strong>Key Features:</strong>
+            </p>
+            <ul>
+                <li>Disease risk prediction (diabetes & heart disease)</li>
+                <li>Real-time health assessment</li>
+                <li>Patient risk stratification (Low/Medium/High)</li>
+                <li>Personalized health recommendations</li>
+                <li>Easy-to-use web interface</li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <p>HealthAI v1.0 | Veritas AI International High School Hackathon</p>
+    </footer>
+</body>
+</html>
